@@ -1,0 +1,52 @@
+var express = require('express')
+var router = express.Router();  
+var bodyParser = require('body-parser');
+
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
+
+const users = [
+    {id:1,userName:'ahsan'},
+    {id:2,userName:'mustafa'},
+    {id:3,userName:'ammar'},
+]
+
+router.get('/users',(req,res)=>{
+    res.send(users)
+});
+
+router.get('/user/:id',(req,res)=>{
+    let user=users.find(u => u.id == req.params.id);
+    if(!user) res.status(400).send("User not found From id:"+req.params.id);
+    console.log(req.query);
+    res.send(user);
+});
+
+router.post('/add-user',(req,res)=>{
+    let user = {
+        id : users.length + 1,
+        userName:req.body.userName,
+    }
+    users.push(user)
+    res.send(user)
+})
+
+router.put('/update-user/:id',(req,res)=>{
+    let user=users.find(u => u.id == req.params.id);
+    if(!user) res.status(400).send("User not found From id:"+req.params.id);
+     
+    user.userName=req.body.userName;
+    res.send(user)
+})
+
+router.delete('/delete-user/:id',(req,res)=>{
+    let user=users.find(u => u.id == req.params.id);
+    if(!user) res.status(400).send("User not found From id:"+req.params.id);
+     
+    const index= users.indexOf(user)
+    users.splice(index,1)
+    res.send(user)
+})
+
+module.exports= router;
